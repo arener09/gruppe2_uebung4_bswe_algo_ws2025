@@ -1,0 +1,26 @@
+id,iata,city,country,latitude,longitude
+1,VIE,Vienna,Austria,48.11083,16.56972
+2,JFK,New York,United States,40.64177,-73.78097
+3,LHR,London,United Kingdom,51.47002,-0.45430
+4,CDG,Paris,France,49.00969,2.54793
+5,FRA,Frankfurt,Germany,50.03793,8.56215
+6,AMS,Amsterdam,Netherlands,52.30861,4.76389
+7,MAD,Madrid,Spain,40.49833,-3.56760
+8,BCN,Barcelona,Spain,41.29708,2.07846
+9,FCO,Rome,Italy,41.80028,12.23889
+10,MXP,Milan,Italy,45.63060,8.72811
+11,CPH,Copenhagen,Denmark,55.61802,12.65611
+12,ARN,Stockholm,Sweden,59.65190,17.91860
+13,ZRH,Zurich,Switzerland,47.45806,8.54806
+14,BRU,Brussels,Belgium,50.90139,4.48444
+15,ATH,Athens,Greece,37.93636,23.94750
+16,LIS,Lisbon,Portugal,38.77417,-9.13417
+17,OSL,Oslo,Norway,60.19755,11.10041
+18,HEL,Helsinki,Finland,60.31722,24.96333
+19,IST,Istanbul,Turkey,41.27528,28.75194
+20,DXB,Dubai,United Arab Emirates,25.25278,55.36444
+21,DOH,Doha,Qatar,25.27306,51.60806
+22,HND,Tokyo,Japan,35.54939,139.77983
+23,SIN,Singapore,Singapore,1.35019,103.99400
+24,HKG,Hong Kong,Hong Kong,22.30889,113.91472
+25,LAX,Los Angeles,United States,33.94159,-118.40853
