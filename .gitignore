@@ -1,0 +1,43 @@
+### IntelliJ IDEA ###
+# Ignore the whole .idea folder
+.idea/
+
+# If you want to keep module files, uncomment this:
+# !.idea/*.iml
+
+# IntelliJ project files
+*.iws
+*.ipr
+*.iml
+
+### Compiled files ###
+*.class
+
+### Build directories ###
+/target/
+/out/
+/build/
+
+### Maven ###
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+
+### Logs ###
+*.log
+
+### OS-specific ###
+.DS_Store
+Thumbs.db
+
+### Other ###
+*.swp
+*.swo
+*.bak
+*.tmp
+hs_err_pid*
+replay_pid*
