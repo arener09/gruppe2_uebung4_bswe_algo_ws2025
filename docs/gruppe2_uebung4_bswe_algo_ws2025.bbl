@@ -1,0 +1,39 @@
+\begin{thebibliography}{1}
+
+\bibitem{baeldungBFS2025}
+Baeldung.
+\newblock Breadth-first search in java, 2025.
+\newblock Abgerufen am 24.10.2025.
+\newblock URL: \url{https://www.baeldung.com/java-breadth-first-search}.
+
+\bibitem{baeldung2025}
+Baeldung.
+\newblock Dijkstra’s algorithm in java, 2025.
+\newblock Abgerufen am 24.10.2025.
+\newblock URL: \url{https://www.baeldung.com/java-dijkstra}.
+
+\bibitem{opencsv2025}
+{OpenCSV Project}.
+\newblock Opencsv documentation, 2025.
+\newblock Abgerufen am 24.10.2025.
+\newblock URL: \url{https://opencsv.sourceforge.net/project-info.html}.
+
+\bibitem{w3schools2025}
+W3Schools.
+\newblock Graphs - dijkstra algorithm, 2025.
+\newblock Abgerufen am 24.10.2025.
+\newblock URL: \url{https://www.w3schools.com/dsa/dsa_algo_graphs_dijkstra.php}.
+
+\bibitem{youtubeBFS2025}
+{YouTube}.
+\newblock Breadth-first search (bfs) algorithm tutorial, 2025.
+\newblock Abgerufen am 24.10.2025.
+\newblock URL: \url{https://www.youtube.com/watch?v=7Cox-J7onXw}.
+
+\bibitem{youtubeDijkstra2025}
+{YouTube}.
+\newblock Dijkstra algorithm explained, 2025.
+\newblock Abgerufen am 24.10.2025.
+\newblock URL: \url{https://www.youtube.com/watch?v=bZkzH5x0SKU}.
+
+\end{thebibliography}
