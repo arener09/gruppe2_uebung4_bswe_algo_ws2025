@@ -41,3 +41,6 @@ Thumbs.db
 *.tmp
 hs_err_pid*
 replay_pid*
+
+### Routes CSV ###
+src/main/resources/routes.csv
