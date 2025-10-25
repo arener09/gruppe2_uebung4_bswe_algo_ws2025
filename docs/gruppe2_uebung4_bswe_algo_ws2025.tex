@@ -1,0 +1,179 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{geometry}
+\usepackage{parskip}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{hyperref}
+\usepackage{url}
+\pgfplotsset{compat=1.18}
+
+\lstset{
+  language=Java,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  stringstyle=\color{red},
+  commentstyle=\color{gray},
+  numbers=left,
+  numberstyle=\tiny,
+  frame=single,
+  breaklines=true,
+  tabsize=4,
+  captionpos=b
+}
+
+\geometry{margin=2.5cm}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\thepage}
+
+\title{Übung 4 - Java Projekt\\\large Dokumentation}
+\author{Raja Abdulhadi, Alexander R. Brenner, Julia Michler - BSWE3B}
+\date{Oktober 2025}
+
+\begin{document}
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+
+\section{Einleitung}
+Im Rahmen der vierten Übung der Lehrveranstaltung \emph{Algorithmen und Programmiertechniken} wurde ein Java-basiertes System zur Verwaltung und Berechnung von Flugrouten entwickelt.  
+
+\section{Architektur und Aufbau}
+\subsection{Schichtenmodell}
+Das System folgt dem Prinzip der \emph{Separation of Concerns (SoC)} und ist in drei logische Ebenen gegliedert:
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Ebene} & \textbf{Verantwortung} & \textbf{Beispielklassen} \\
+\midrule
+Repository & Einlesen und Schreiben von CSV-Dateien & \texttt{AirportRepository}, \texttt{FlightRepository}, \texttt{RouteRepository} \\
+Service & Bereitstellung der geladenen Daten, Koordination & \texttt{RoutingDataService} \\
+Algorithmus/Business & Routenberechnung (Dijkstra, BFS) & \texttt{RoutingCalculator} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Diese Struktur stellt sicher, dass technische Aspekte (Dateizugriff) klar von der Geschäftslogik (Routenberechnung) getrennt bleiben.  
+Eine spätere Migration von CSV-Dateien zu einer Datenbank wäre dadurch mit minimalem Aufwand möglich.
+
+\subsection{Datenmodell}
+Die Kern-Modelle spiegeln die realen Entitäten des Problems wider:
+\begin{itemize}
+  \item \textbf{Airport}: Repräsentiert einen Flughafen mit IATA-Code, Stadt, Land und Koordinaten.
+  \item \textbf{Flight}: Repräsentiert einen gerichteten Flug (Kante) zwischen zwei Flughäfen mit Attributen wie Airline, Preis, Dauer und Abflugzeit.
+  \item \textbf{Route}: Bündelt eine Sequenz von Flügen mit Gesamtpreis, Gesamtdauer und Anzahl der Umstiege.
+\end{itemize}
+
+\subsection{CSV-Verarbeitung mit OpenCSV}
+Zum Einlesen der CSV-Dateien wurde die Bibliothek \textbf{OpenCSV} \cite{opencsv2025} eingesetzt.  
+Diese erlaubt eine deklarative Abbildung von CSV-Spalten auf Java-Attribute mittels Annotationen:
+
+\begin{lstlisting}[caption={Beispiel: Mapping einer CSV-Spalte auf ein Attribut}]
+public class Airport {
+
+  /** Unique numeric identifier for the airport. */
+  @CsvBindByName(column = "id")
+  private int id;
+
+  /** Three-letter IATA code (e.g., VIE, JFK). */
+  @CsvBindByName(column = "iata")
+  private String iata;
+
+  ...
+}
+\end{lstlisting}
+
+Die Klassen \texttt{AirportRepository}, \texttt{FlightRepository} und \texttt{RouteRepository} kapseln den Dateizugriff vollständig und behandeln auch mögliche Fehler (z. B. fehlerhafte Formatierungen oder fehlende Dateien).
+
+\subsection{Graphenbasierte Modellierung}
+Für die Berechnung von Flugrouten wurde ein gerichteter Graph verwendet, da Flüge stets eine Richtung besitzen (z. B. VIE nach JFK).  
+Die interne Repräsentation erfolgt über folgende Struktur:
+
+\begin{itemize}
+  \item \textbf{Node}: Ein Knoten entspricht einem Flughafen.
+  \item \textbf{Edge}: Eine Kante repräsentiert einen Flug mit Gewicht (z. B. Preis oder Dauer).
+  \item \textbf{Graph}: Verwaltet alle Knoten und Kanten in einer Map-basierten Struktur.
+\end{itemize}
+
+Diese Modellierung ermöglicht die Anwendung klassischer Pathfinding-Algorithmen wie Dijkstra \cite{baeldung2025,w3schools2025,youtubeDijkstra2025} oder BFS \cite{baeldungBFS2025,youtubeBFS2025}.
+
+\subsection{Pathfinding-Algorithmen}
+Die zentrale Aufgabe des Projekts besteht darin, Routen zwischen Flughäfen zu finden, die entweder die geringsten Gesamtkosten, die kürzeste Flugdauer oder die wenigsten Umstiege aufweisen.  
+Damit handelt es sich algorithmisch um ein klassisches \emph{Pathfinding}-Problem in einem gerichteten, gewichteten Graphen.  
+Im Folgenden werden die beiden gewählten Algorithmen erläutert und ihre Auswahl begründet.
+
+\subsubsection{Dijkstra-Algorithmus - Kürzeste bzw. günstigste Route}
+Für die Berechnung der kostengünstigsten oder schnellsten Verbindung wurde der \textbf{Dijkstra-Algorithmus} gewählt.  
+Er stellt einen der effizientesten exakten Algorithmus zur Bestimmung kürzester Wege in einem Graphen mit ausschließlich positiven Kantengewichten dar \cite{baeldung2025}.  
+Da sowohl Flugpreise als auch Flugdauern stets positiv sind, erfüllt das zugrundeliegende Modell genau diese Voraussetzung.
+
+Andere Ansätze wie \emph{Bellman-Ford} oder \emph{Floyd-Warshall} bieten zwar ebenfalls korrekte Lösungen, sind jedoch in diesem Szenario deutlich weniger effizient, da sie auf Graphen mit negativen Kanten bzw. auf vollständige Distanzmatrizen ausgelegt sind.  
+\emph{A*} wäre eine weitere Alternative, benötigt jedoch eine geeignete Heuristik (z. B. Luftlinienentfernung), die im Kontext von Flugrouten problematisch ist: geografische Nähe bedeutet nicht automatisch kürzere Reisezeit oder geringere Kosten.
+
+Damit stellt Dijkstra hier den idealen Kompromiss aus Genauigkeit, Laufzeiteffizienz und Implementierbarkeit dar.
+
+\begin{lstlisting}[caption={Ausschnitt: Priority-Queue im Dijkstra-Algorithmus}]
+PriorityQueue<String> queue =
+    new PriorityQueue<>(Comparator.comparingDouble(distance::get));
+queue.add(origin);
+\end{lstlisting}
+
+Die Prioritätswarteschlange (\texttt{PriorityQueue}) stellt sicher, dass stets der Knoten mit der aktuell geringsten bekannten Distanz als Nächstes verarbeitet wird.  
+Dies erlaubt eine effiziente Berechnung selbst in größeren Datensätzen mit hunderten Flughäfen und Verbindungen.
+
+\paragraph{Komplexitätsanalyse}
+\begin{itemize}
+  \item \textbf{Zeit:} $O((V + E)\log V)$  
+  \item \textbf{Speicher:} $O(V + E)$  
+\end{itemize}
+
+Zur Implementierung diente die Referenzimplementierung von Baeldung \cite{baeldung2025} sowie ergänzende Beispiele aus \emph{W3Schools DSA} \cite{w3schools2025} und einem erklärenden YouTube-Tutorial \cite{youtubeDijkstra2025}.
+
+\subsubsection{BFS - Route mit den wenigsten Umstiegen}
+Für die Berechnung der Verbindung mit der geringsten Anzahl an Flügen wurde die \textbf{Breadth-First Search (BFS)}-Strategie verwendet.  
+BFS arbeitet auf ungewichteten Graphen und garantiert den kürzesten Pfad in Bezug auf die Anzahl der Kanten - im Kontext dieses Projekts also die minimale Zahl an Umstiegen \cite{baeldungBFS2025}.
+
+Die Wahl fiel bewusst auf BFS, da in diesem Fall nicht Kosten oder Zeit, sondern die reine Fluganzahl optimiert werden soll.  
+Ein gewichteter Algorithmus wie Dijkstra oder A* wäre hier ungeeignet, da eine künstliche Gewichtung (z. B. „1 pro Flug“) den linearen BFS-Ansatz nur unnötig verkomplizieren würde.
+
+\paragraph{Komplexitätsanalyse}
+\begin{itemize}
+  \item \textbf{Zeit:} $O(V + E)$
+  \item \textbf{Speicher:} $O(V)$
+\end{itemize}
+
+BFS bietet somit eine sehr performante Lösung für ungewichtete Suchprobleme, während Dijkstra die optimale Wahl für gewichtete Szenarien mit positiven Kosten darstellt \cite{youtubeBFS2025}.  
+Zusammen bilden sie die zentrale algorithmische Grundlage der Routing-Komponente des Projekts.
+
+
+\newpage
+\section*{Einsatz von KI-Tools}
+Wir möchten darauf hinweisen, dass während der Bearbeitung der Aufgabe
+unterstützende generative KI-Tools (GitHub Copilot, ChatGPT, Cursor) verwendet wurden.
+Dies betraf insbesondere eher triviale oder sich wiederholende Tätigkeiten, wie beispielsweise das Erstellen von Kommentaren
+und JavaDocs, das Erstellen von Testdaten im CSV-Format oder das Anlegen einer \texttt{.gitignore}-Datei. Darüber hinaus wurden auch Unit-Tests für einige Klassen generiert, diese wurden jedoch stets sorgfältig überprüft und bei Bedarf angepasst.
+Ebenso trugen die Tools dazu bei, Notizen schneller in eine lesbare Form zu überführen und unsere Gedanken in einem akademisch angemessenen Stil zu formulieren.
+Alle generierten Inhalte wurden sorgfältig überprüft und bei Bedarf angepasst, um sicherzustellen, dass sie korrekt und relevant sind.
+
+Der zentrale Aspekt der Arbeit - Architektur, Strukturierung und die zugrundeliegenden Algorithmen - wurden
+eigenständig ausgewählt und erarbeitet. Das Ziel des Einsatzes von KI war es, zeitintensive Nebentätigkeiten effizienter zu
+gestalten, um mehr Aufmerksamkeit auf die konzeptionellen und algorithmischen Aspekte richten zu können.
+
+Dementsprechend betrachten wir diese Arbeit eindeutig als Eigenleistung.
+
+\newpage
+\bibliographystyle{plainurl}
+\bibliography{references}
+
+\end{document}
