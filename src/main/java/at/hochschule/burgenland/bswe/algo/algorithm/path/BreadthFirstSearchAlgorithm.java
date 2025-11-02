@@ -34,7 +34,11 @@ public class BreadthFirstSearchAlgorithm extends PathFindingAlgorithm {
 
     // Initialize queue with direct flights from origin
     for (Edge edge : graph.getOutgoingEdges(origin)) {
-      queue.add(Collections.singletonList(edge));
+      List<Edge> path = Collections.singletonList(edge);
+      // Validate single flight
+      if (isValidFlightCount(path)) {
+        queue.add(path);
+      }
     }
 
     Set<String> visited = new HashSet<>();
@@ -46,15 +50,23 @@ public class BreadthFirstSearchAlgorithm extends PathFindingAlgorithm {
       String currentAirport = lastEdge.getDestinationIata();
 
       if (currentAirport.equals(destination)) {
-        Route route = buildRouteFromEdges(path);
-        log.info(
-            "Route found from {} to {} | Stops: {}, Duration: {} min, Price: €{}",
-            origin,
-            destination,
-            route.getStopovers(),
-            route.getTotalDuration(),
-            route.getTotalPrice());
-        return route;
+        // Final validation before returning
+        if (areAllConnectionsValid(path)) {
+          Route route = buildRouteFromEdges(path);
+          log.info(
+              "Route found from {} to {} | Stops: {}, Duration: {} min, Price: €{}",
+              origin,
+              destination,
+              route.getStopovers(),
+              route.getTotalDuration(),
+              route.getTotalPrice());
+          return route;
+        }
+      }
+
+      // Check if we've exceeded max flights
+      if (!isValidFlightCount(path)) {
+        continue;
       }
 
       if (!visited.contains(currentAirport)) {
@@ -64,6 +76,16 @@ public class BreadthFirstSearchAlgorithm extends PathFindingAlgorithm {
 
           List<Edge> newPath = new ArrayList<>(path);
           newPath.add(nextEdge);
+
+          // Validate: check flight count and connection times
+          if (!isValidFlightCount(newPath)) {
+            continue; // Skip if too many flights
+          }
+
+          if (!areAllConnectionsValid(newPath)) {
+            continue; // Skip if connection times are invalid
+          }
+
           queue.add(newPath);
         }
       }
