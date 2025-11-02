@@ -33,18 +33,21 @@ public class DijkstraAlgorithm extends PathFindingAlgorithm {
       return null;
     }
 
+    // Store the path to each node for validation
+    Map<String, List<Edge>> paths = new HashMap<>();
     Map<String, Double> distance = new HashMap<>();
-    Map<String, String> predecessor = new HashMap<>();
-    Map<String, Edge> incomingEdge = new HashMap<>();
     Set<String> visited = new HashSet<>();
 
-    // Initialize distances
+    // Initialize distances and paths
     for (String iata : graph.getNodes().keySet()) {
       distance.put(iata, Double.POSITIVE_INFINITY);
+      paths.put(iata, new ArrayList<>());
     }
     distance.put(origin, 0.0);
+    paths.put(origin, new ArrayList<>());
 
-    PriorityQueue<String> queue = new PriorityQueue<>(Comparator.comparingDouble(distance::get));
+    PriorityQueue<String> queue =
+        new PriorityQueue<>(Comparator.comparingDouble(distance::get));
     queue.add(origin);
 
     while (!queue.isEmpty()) {
@@ -55,35 +58,49 @@ public class DijkstraAlgorithm extends PathFindingAlgorithm {
       // Stop early if destination reached
       if (current.equals(destination)) break;
 
+      List<Edge> currentPath = paths.get(current);
+
+      // Check if we've exceeded max flights
+      if (!isValidFlightCount(currentPath)) {
+        continue;
+      }
+
       for (Edge edge : graph.getOutgoingEdges(current)) {
         String neighbor = edge.getDestinationIata();
         if (visited.contains(neighbor)) continue;
 
+        // Build new path with this edge
+        List<Edge> newPath = new ArrayList<>(currentPath);
+        newPath.add(edge);
+
+        // Validate: check flight count and connection times
+        if (!isValidFlightCount(newPath)) {
+          continue; // Skip if too many flights
+        }
+
+        if (!areAllConnectionsValid(newPath)) {
+          continue; // Skip if connection times are invalid
+        }
+
         double newDist = distance.get(current) + weightFunc.applyAsDouble(edge);
         if (newDist < distance.get(neighbor)) {
           distance.put(neighbor, newDist);
-          predecessor.put(neighbor, current);
-          incomingEdge.put(neighbor, edge);
+          paths.put(neighbor, newPath);
           queue.add(neighbor);
         }
       }
     }
 
-    // No path found
-    if (!predecessor.containsKey(destination) && !origin.equals(destination)) {
-      log.warn("No Route found from {} to {}", origin, destination);
+    // Check if we found a path
+    List<Edge> finalPath = paths.get(destination);
+    if (finalPath == null || finalPath.isEmpty()) {
+      if (!origin.equals(destination)) {
+        log.warn("No Route found from {} to {}", origin, destination);
+      }
       return null;
     }
 
-    // Reconstruct edge path
-    List<Edge> path = new ArrayList<>();
-    String current = destination;
-    while (current != null && incomingEdge.containsKey(current)) {
-      path.add(0, incomingEdge.get(current));
-      current = predecessor.get(current);
-    }
-
-    Route route = buildRouteFromEdges(path);
+    Route route = buildRouteFromEdges(finalPath);
     log.info(
         "Route found from {} to {} | Stops: {}, Duration: {} min, Price: €{}",
         origin,
