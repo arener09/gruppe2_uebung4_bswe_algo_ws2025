@@ -33,13 +33,13 @@ public class RouteRepository {
    * @throws IllegalStateException if parsing fails
    */
   public List<Route> loadRoutes() throws IOException {
-    File file = new File(ROUTES_FILE);
-    if (!file.exists()) {
+    InputStream stream = getClass().getResourceAsStream(ROUTES_FILE);
+    if (stream == null) {
       log.warn("routes.csv not found at {}", ROUTES_FILE);
       return Collections.emptyList();
     }
 
-    try (Reader reader = new FileReader(file)) {
+    try (Reader reader = new InputStreamReader(stream)) {
       List<Route> routes =
           new CsvToBeanBuilder<Route>(reader)
               .withType(Route.class)
