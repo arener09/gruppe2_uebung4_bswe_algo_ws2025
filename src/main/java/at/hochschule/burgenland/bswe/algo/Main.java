@@ -38,8 +38,7 @@ public class Main {
       routes.add(cheapest);
       Route fastest = calculator.findRoute(graph, origin, destination, RouteType.FASTEST);
       routes.add(fastest);
-      Route fewestStops =
-          calculator.findRoute(graph, origin, destination, RouteType.FEWEST_STOPOVERS);
+      Route fewestStops = calculator.findRoute(graph, origin, destination, RouteType.FEWEST_STOPOVERS);
       routes.add(fewestStops);
 
 

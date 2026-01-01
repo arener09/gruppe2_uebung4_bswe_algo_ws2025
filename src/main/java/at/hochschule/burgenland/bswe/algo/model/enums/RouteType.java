@@ -15,5 +15,8 @@ public enum RouteType {
   FASTEST,
 
   /** Finds the route with the fewest stopovers (least number of flights). */
-  FEWEST_STOPOVERS
+  FEWEST_STOPOVERS,
+
+  /** Finds the route with the longest total travel duration (slowest). */
+  SLOWEST
 }
