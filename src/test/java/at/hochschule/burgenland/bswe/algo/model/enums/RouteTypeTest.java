@@ -15,10 +15,11 @@ class RouteTypeTest {
   @Test
   void testEnumValues() {
     RouteType[] values = RouteType.values();
-    assertEquals(3, values.length);
+    assertEquals(4, values.length);
     assertEquals(RouteType.CHEAPEST, values[0]);
     assertEquals(RouteType.FASTEST, values[1]);
     assertEquals(RouteType.FEWEST_STOPOVERS, values[2]);
+    assertEquals(RouteType.SLOWEST, values[3]);
   }
 
   @Test
@@ -26,5 +27,6 @@ class RouteTypeTest {
     assertEquals(RouteType.CHEAPEST, RouteType.valueOf("CHEAPEST"));
     assertEquals(RouteType.FASTEST, RouteType.valueOf("FASTEST"));
     assertEquals(RouteType.FEWEST_STOPOVERS, RouteType.valueOf("FEWEST_STOPOVERS"));
+    assertEquals(RouteType.SLOWEST, RouteType.valueOf("SLOWEST"));
   }
 }
