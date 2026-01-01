@@ -38,6 +38,7 @@ public class RoutingCalculator {
       case CHEAPEST -> findCheapestRoute(graph, origin, destination);
       case FASTEST -> findFastestRoute(graph, origin, destination);
       case FEWEST_STOPOVERS -> findFewestStopovers(graph, origin, destination);
+      case SLOWEST -> findSlowestRoute(graph, origin, destination);
     };
   }
 
@@ -78,5 +79,23 @@ public class RoutingCalculator {
   private Route findFewestStopovers(Graph graph, String origin, String destination) {
     log.info("Calculating route with fewest stopovers from {} to {}", origin, destination);
     return bfs.findRoute(graph, origin, destination);
+  }
+
+  /**
+   * Finds the slowest route between two airports using a modified Dijkstra's algorithm.
+   *
+   * <p>This method finds the route with the longest total travel duration by negating the duration
+   * values and using Dijkstra's algorithm to find the "shortest" path in the negated graph, which
+   * corresponds to the longest path in the original graph.
+   *
+   * @param graph the flight graph containing all airports and flights
+   * @param origin IATA code of the starting airport
+   * @param destination IATA code of the destination airport
+   * @return the slowest {@link Route} between the two airports, or {@code null} if none exists
+   */
+  private Route findSlowestRoute(Graph graph, String origin, String destination) {
+    log.info("Calculating slowest route from {} to {}", origin, destination);
+    // Use negated duration to find the longest path (Dijkstra finds shortest, so negating finds longest)
+    return dijkstra.findRoute(graph, origin, destination, edge -> -edge.getDuration());
   }
 }
