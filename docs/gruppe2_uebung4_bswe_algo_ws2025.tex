@@ -156,6 +156,158 @@ Ein gewichteter Algorithmus wie Dijkstra oder A* wäre hier ungeeignet, da eine 
 BFS bietet somit eine sehr performante Lösung für ungewichtete Suchprobleme, während Dijkstra die optimale Wahl für gewichtete Szenarien mit positiven Kosten darstellt \cite{youtubeBFS2025}.  
 Zusammen bilden sie die zentrale algorithmische Grundlage der Routing-Komponente des Projekts.
 
+\newpage
+\section{Benutzeroberfläche und Funktionalität}
+\subsection{Konsolenmenü}
+Das System bietet eine interaktive Konsolenoberfläche, die über die Klasse \texttt{ConsoleMenu} realisiert wird.  
+Diese ermöglicht es Benutzern, alle Funktionen des Flugroutenplaners über eine einfache Menüstruktur zu nutzen.
+
+Die Anwendung startet in der \texttt{Main}-Klasse und initialisiert automatisch das Konsolenmenü:
+
+\begin{lstlisting}[caption={Einstiegspunkt der Anwendung}]
+public static void main(String[] args) {
+  ConsoleMenu consoleMenu = new ConsoleMenu();
+  consoleMenu.startMenu();
+}
+\end{lstlisting}
+
+Das Hauptmenü bietet vier Optionen:
+\begin{itemize}
+  \item \textbf{Option 1:} Flugroute berechnen
+  \item \textbf{Option 2:} Flugrouten sortieren
+  \item \textbf{Option 3:} Flüge suchen
+  \item \textbf{Option 9:} Programm beenden
+\end{itemize}
+
+Das Menü läuft in einer Schleife, bis der Benutzer explizit die Option zum Beenden wählt.
+
+\subsection{Routenberechnung}
+Die Routenberechnung (Option 1) ermöglicht es, optimale Flugverbindungen zwischen zwei Flughäfen zu finden.  
+Der Benutzer wird zunächst aufgefordert, den IATA-Code des Abflughafens einzugeben.  
+Anschließend wird eine Liste aller verfügbaren IATA-Codes angezeigt, um die Eingabe zu erleichtern.
+
+Nach der Eingabe von Abflug- und Zielflughafen (mit Validierung, dass beide unterschiedlich sind) kann der Benutzer zwischen vier Optimierungskriterien wählen:
+
+\begin{enumerate}
+  \item \textbf{Günstigste Route:} Minimiert die Gesamtkosten (Dijkstra mit Preis als Gewicht)
+  \item \textbf{Schnellste Route:} Minimiert die Gesamtflugdauer (Dijkstra mit Dauer als Gewicht)
+  \item \textbf{Wenigste Umstiege:} Minimiert die Anzahl der Flüge (BFS)
+  \item \textbf{Langsamste Route:} Maximiert die Gesamtflugdauer (Dijkstra mit negiertem Gewicht)
+\end{enumerate}
+
+Die gefundene Route wird anschließend formatiert ausgegeben und zeigt Flugdetails, Gesamtdauer, Gesamtpreis und Anzahl der Umstiege an.
+
+\subsection{Sortierfunktionalität}
+Die Sortierfunktion (Option 2) ermöglicht es, eine Liste von Routen nach verschiedenen Kriterien zu sortieren.  
+Der Benutzer gibt zunächst eine komma-separierte Liste von Routen-IDs ein, die sortiert werden sollen.
+
+Anschließend kann zwischen zwei Sortieralgorithmen gewählt werden:
+\begin{itemize}
+  \item \textbf{Stabile Sortierung (MergeSort):} Erhält die relative Reihenfolge gleichwertiger Elemente
+  \item \textbf{Instabile Sortierung (QuickSort):} Kann die Reihenfolge gleichwertiger Elemente ändern, ist jedoch in der Praxis oft schneller
+\end{itemize}
+
+Für die Sortierreihenfolge stehen folgende Komparatoren zur Verfügung:
+\begin{enumerate}
+  \item \textbf{Preis (aufsteigend):} Sortiert nach Gesamtpreis, günstigste zuerst
+  \item \textbf{Dauer (aufsteigend):} Sortiert nach Gesamtflugdauer, schnellste zuerst
+  \item \textbf{Dauer (absteigend):} Sortiert nach Gesamtflugdauer, langsamste zuerst
+  \item \textbf{Umstiege (aufsteigend):} Sortiert nach Anzahl der Umstiege, wenigste zuerst
+  \item \textbf{Kombiniert:} Sortiert primär nach Airline, sekundär nach Dauer, tertiär nach Umstiegen
+\end{enumerate}
+
+Die sortierten Routen werden anschließend ausgegeben.
+
+\subsection{Suchfunktionalität}
+Die Suchfunktion (Option 3) ermöglicht es, Flüge nach verschiedenen Kriterien zu durchsuchen.  
+Der Benutzer kann zwischen vier Suchoptionen wählen:
+
+\begin{enumerate}
+  \item \textbf{Suche nach Abflughafen:} Findet alle Flüge, die von einem bestimmten IATA-Code starten
+  \item \textbf{Suche nach Zielflughafen:} Findet alle Flüge, die zu einem bestimmten IATA-Code fliegen
+  \item \textbf{Suche nach Airline:} Findet alle Flüge einer bestimmten Fluggesellschaft
+  \item \textbf{Suche nach Flugnummer:} Findet einen spezifischen Flug anhand seiner Flugnummer
+\end{enumerate}
+
+Alle Suchvorgänge sind case-insensitive (Groß-/Kleinschreibung wird ignoriert) und durchsuchen die gesamte Flugdatenbank.  
+Wenn keine passenden Flüge gefunden werden, wird eine entsprechende Meldung ausgegeben.
+
+\newpage
+\section{Sortieralgorithmen}
+Neben den Pathfinding-Algorithmen implementiert das System auch zwei klassische Sortieralgorithmen, die zur Sortierung von Routen verwendet werden können.  
+Beide Algorithmen erben von der abstrakten Basisklasse \texttt{SortingAlgorithm} und implementieren die Methode \texttt{sort(List<Route>, Comparator<Route>)}.
+
+\subsection{MergeSort - Stabile Sortierung}
+\textbf{MergeSort} wurde als stabile Sortierlösung implementiert.  
+Der Algorithmus arbeitet nach dem Divide-and-Conquer-Prinzip:
+
+\begin{enumerate}
+  \item Die Liste wird rekursiv in zwei Hälften geteilt
+  \item Beide Hälften werden rekursiv sortiert
+  \item Die sortierten Hälften werden zu einer sortierten Liste zusammengeführt
+\end{enumerate}
+
+\paragraph{Vorteile von MergeSort}
+\begin{itemize}
+  \item \textbf{Stabilität:} Die relative Reihenfolge gleichwertiger Elemente bleibt erhalten
+  \item \textbf{Vorhersagbare Laufzeit:} Garantiert $O(n \log n)$ in allen Fällen (best, average, worst)
+  \item \textbf{Keine Worst-Case-Degradierung:} Im Gegensatz zu QuickSort gibt es keine ungünstigen Eingabemuster
+\end{itemize}
+
+\paragraph{Komplexitätsanalyse}
+\begin{itemize}
+  \item \textbf{Zeit:} $O(n \log n)$ (best, average, worst case)
+  \item \textbf{Speicher:} $O(n)$ (zusätzlicher Speicher für das Merging)
+\end{itemize}
+
+MergeSort eignet sich besonders, wenn die Stabilität der Sortierung wichtig ist, beispielsweise wenn Routen mit identischen Preisen in ihrer ursprünglichen Reihenfolge erhalten bleiben sollen.
+
+\subsection{QuickSort - Instabile Sortierung}
+\textbf{QuickSort} wurde als instabile, aber in der Praxis oft schnellere Alternative implementiert.  
+Der Algorithmus verwendet ebenfalls Divide-and-Conquer:
+
+\begin{enumerate}
+  \item Ein Pivot-Element wird ausgewählt (randomisiert, um Worst-Case zu vermeiden)
+  \item Die Liste wird um das Pivot partitioniert (kleinere Elemente links, größere rechts)
+  \item Die beiden Partitionen werden rekursiv sortiert
+\end{enumerate}
+
+\paragraph{Vorteile von QuickSort}
+\begin{itemize}
+  \item \textbf{Hervorragende durchschnittliche Laufzeit:} $O(n \log n)$ im Durchschnitt
+  \item \textbf{Geringerer Speicherbedarf:} $O(\log n)$ für den Rekursionsstack
+  \item \textbf{Bessere Cache-Lokalität:} In-Place-Sortierung führt zu weniger Speicherzugriffen
+  \item \textbf{Randomisierter Pivot:} Vermeidet Worst-Case-Szenarien durch zufällige Pivot-Auswahl
+\end{itemize}
+
+\paragraph{Komplexitätsanalyse}
+\begin{itemize}
+  \item \textbf{Zeit:} $O(n \log n)$ average case, $O(n^2)$ worst case (selten durch Randomisierung)
+  \item \textbf{Speicher:} $O(\log n)$ average case für Rekursionsstack
+\end{itemize}
+
+QuickSort eignet sich besonders für große Datenmengen, wenn Stabilität nicht erforderlich ist und maximale Performance im Durchschnittsfall gewünscht wird.
+
+\subsection{Auswahl zwischen MergeSort und QuickSort}
+Die Wahl zwischen den beiden Algorithmen hängt von den Anforderungen ab:
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Kriterium} & \textbf{MergeSort} & \textbf{QuickSort} \\
+\midrule
+Stabilität & Ja & Nein \\
+Worst-Case-Garantie & $O(n \log n)$ & $O(n^2)$ \\
+Durchschnitts-Performance & $O(n \log n)$ & $O(n \log n)$ (oft schneller) \\
+Speicherbedarf & $O(n)$ & $O(\log n)$ \\
+Cache-Lokalität & Schlechter & Besser \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Im Kontext dieses Projekts kann der Benutzer je nach Anforderung zwischen beiden Algorithmen wählen:  
+Wenn die ursprüngliche Reihenfolge gleichwertiger Routen wichtig ist, sollte MergeSort verwendet werden.  
+Wenn maximale Performance bei großen Datenmengen im Vordergrund steht und Stabilität nicht erforderlich ist, ist QuickSort die bessere Wahl.
 
 \newpage
 \section*{Einsatz von KI-Tools}
