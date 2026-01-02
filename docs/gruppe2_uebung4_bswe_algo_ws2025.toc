@@ -10,3 +10,16 @@
 \contentsline {paragraph}{Komplexitätsanalyse}{5}{section*.2}%
 \contentsline {subsubsection}{\numberline {2.5.2}BFS - Route mit den wenigsten Umstiegen}{5}{subsubsection.2.5.2}%
 \contentsline {paragraph}{Komplexitätsanalyse}{5}{section*.3}%
+\contentsline {section}{\numberline {3}Benutzeroberfläche und Funktionalität}{6}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Konsolenmenü}{6}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Routenberechnung}{6}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Sortierfunktionalität}{7}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Suchfunktionalität}{7}{subsection.3.4}%
+\contentsline {section}{\numberline {4}Sortieralgorithmen}{8}{section.4}%
+\contentsline {subsection}{\numberline {4.1}MergeSort - Stabile Sortierung}{8}{subsection.4.1}%
+\contentsline {paragraph}{Vorteile von MergeSort}{8}{section*.4}%
+\contentsline {paragraph}{Komplexitätsanalyse}{8}{section*.5}%
+\contentsline {subsection}{\numberline {4.2}QuickSort - Instabile Sortierung}{8}{subsection.4.2}%
+\contentsline {paragraph}{Vorteile von QuickSort}{8}{section*.6}%
+\contentsline {paragraph}{Komplexitätsanalyse}{9}{section*.7}%
+\contentsline {subsection}{\numberline {4.3}Auswahl zwischen MergeSort und QuickSort}{9}{subsection.4.3}%
